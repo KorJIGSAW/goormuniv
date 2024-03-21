@@ -62,6 +62,41 @@
                 width: calc(100% - 40px);
             }
         }
+        /* 말풍선 기본 스타일 */
+        .chat-message .text {
+            position: relative; /* 가상 요소 위치 기준 */
+            border-radius: 16px; /* 말풍선 둥근 모서리 */
+        }
+
+        /* 비서 말풍선 왼쪽 상단 튀어나옴 효과 */
+        .assistant-message .text::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 4px; /* 말풍선 왼쪽으로 튀어나옴 */
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-right-color: #ffffff; /* 비서 말풍선 배경색과 동일 */
+            border-left: 0;
+            margin-top: 6px;
+            margin-left: -10px;
+        }
+
+        /* 사용자 말풍선 오른쪽 상단 튀어나옴 효과 */
+        .user-message .text::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 4px; /* 말풍선 오른쪽으로 튀어나옴 */
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-left-color: #DCF8C6; /* 사용자 말풍선 배경색과 동일 */
+            border-right: 0;
+            margin-top: 6px;
+            margin-right: -10px;
+        }
     </style>
 </head>
 <body>
@@ -70,7 +105,7 @@
     </div>
     <input type="text" id="urlInput" placeholder="웹툰 URL을 입력해주세요">
     <button id="fetchButton">결과 보기</button>
-    <div id="result"></div>
+    <div id="result"></div>     
 
     <script>
         function addMessageToChatBox(message, type) {
