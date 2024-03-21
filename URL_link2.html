@@ -9,7 +9,7 @@
             font-family: "Noto Sans KR", sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f0f0;
+            background-color: #000000;
         }
         .chat-box {
             max-width: 90%;
@@ -30,21 +30,25 @@
         .user-message .text {
             background-color: #DCF8C6; /* 카카오톡 사용자 말풍선 색상 */
             align-self: flex-end;
+            opacity: 0.5;
         }
         .assistant-message .text {
             background-color: #ffffff; /* 카카오톡 비서 말풍선 색상 */
             align-self: flex-start;
+            opacity: 0.5;
         }
         input#urlInput, button#fetchButton, #result {
             width: 90%;
             padding: 10px;
             margin: 20px auto;
             display: block;
+            opacity: 0.5;
         }
         input#urlInput {
             width: calc(70% - 40px);
             border: 1px solid #ccc;
             border-radius: 20px;
+            opacity: 0.5;
         }
         button#fetchButton {
             width: 28%;
@@ -166,6 +170,5 @@
             });
         });
     </script>
-
 </body>
 </html>
