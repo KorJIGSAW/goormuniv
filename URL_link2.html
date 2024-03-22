@@ -112,14 +112,18 @@
     <div id="result"></div>     
 
     <script>
-        function addMessageToChatBox(message, type) {
+        function addMessageToChatBox(message, type, isHtml = false) {
             const chatBox = document.getElementById('chatBox');
             const messageElement = document.createElement('div');
             messageElement.classList.add('chat-message', type + '-message');
             
             const textElement = document.createElement('div');
             textElement.classList.add('text');
-            textElement.textContent = message;
+            if (isHtml) {
+                textElement.innerHTML = message; // HTML로 처리
+            } else {
+                textElement.textContent = message; // 텍스트로 처리
+            }
             
             messageElement.appendChild(textElement);
             chatBox.appendChild(messageElement);
@@ -141,7 +145,7 @@
             //사용자가 입력한 URL을 사용자의 말풍선으로 표시
             addMessageToChatBox(urlInput, 'user');
     
-            const apiEndpoint = 'http://34.64.213.235:8000/crawl';
+            const apiEndpoint = 'https://decalcomanie-yebvymrbqa-du.a.run.app/chat';
             const data = {
                 url: urlInput
             };
@@ -158,11 +162,18 @@
                 }
                 return response.json();
             })
+            // .then(data => {
+            //     console.log(data);
+            //     // API 호출 결과를 사용자에게 표시
+            //     addMessageToChatBox(JSON.stringify(data, null, 2), 'assistant');
+            // })
             .then(data => {
                 console.log(data);
-                // API 호출 결과를 사용자에게 표시
-                addMessageToChatBox(JSON.stringify(data, null, 2), 'assistant');
+                const feedbackWithLineBreaks = data.feedback.replace(/(?<!^)(\d+\.\s)/g, '\n$1');
+                // API 호출 결과 중 "feedback" 키에 해당하는 값만 사용자에게 표시
+                addMessageToChatBox(data.feedback, 'assistant');
             })
+
             .catch(error => {
                 console.error('API 호출에 실패했습니다.', error);
                 // 에러 메시지를 사용자에게 표시
