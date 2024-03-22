@@ -169,9 +169,9 @@
             // })
             .then(data => {
                 console.log(data);
-                const feedbackWithLineBreaks = data.feedback.replace(/(?<!^)(\d+\.\s)/g, '\n$1');
+                const feedbackWithLineBreaks = data.feedback.replace(/(?<!^)(\d+\.\s)/g, '\n<br>$1');
                 // API 호출 결과 중 "feedback" 키에 해당하는 값만 사용자에게 표시
-                addMessageToChatBox(data.feedback, 'assistant');
+                addMessageToChatBox(feedbackWithLineBreaks, 'assistant', true);
             })
 
             .catch(error => {
