@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 및 API 요청 예시</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 300px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>회원가입</h2>
+        <input type="text" id="signupName" placeholder="이름">
+        <input type="email" id="signupEmail" placeholder="이메일">
+        <input type="password" id="signupPassword" placeholder="비밀번호">
+        <button onclick="signup()">회원가입</button>
+
+        <h2>로그인</h2>
+        <input type="email" id="loginEmail" placeholder="이메일">
+        <input type="password" id="loginPassword" placeholder="비밀번호">
+        <button onclick="login()">로그인</button>
+    </div>
+
+    <button id="fetchDataButton">접근하기</button>
+
+    <script>
+        // 회원가입 함수
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            fetch('http://34.64.213.235:8000/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('회원가입 성공: ' + data.message);
+                })
+                .catch((error) => {
+                    console.error('회원가입 실패:', error);
+                });
+        }
+
+        // 로그인 함수
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            fetch('http://34.64.213.235:8000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const accessToken = data.accessToken;
+                    localStorage.setItem('token', accessToken); // 로컬 스토리지에 토큰 저장
+                    console.log(accessToken);
+                })
+                .catch((error) => {
+                    console.error('로그인 실패:', error);
+                });
+        }
+
+        // 접근하기 버튼 클릭 이벤트
+        document.getElementById('fetchDataButton').addEventListener('click', function() {
+            const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+            console.log(token);
+
+            fetch('http://34.64.213.235:8000/hi', {
+                method: 'GET',
+                headers: {
+                    'accessToken': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 올바르지 않습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('요청 중 에러 발생:', error);
+                });
+        });
+    </script>
+</body>
+</html>
