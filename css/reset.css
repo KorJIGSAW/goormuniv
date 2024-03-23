@@ -135,10 +135,10 @@ input {
 /* 웹폰트 CSS */
 @font-face {
     font-family: 'PretendardVariable';
-    src: url(../webfont/PretendardVariable.ttf)   
+    src: url(../webfont/PretendardVariable.ttf);
 }
 
 @font-face {
-    font-family: 'PretendardVariable';
-    src: url(../webfont/PretendardVariable.ttf)
+    font-family: 'WAGURI';
+    src: url(../webfont/첨부파일5\(WAGURI\ TTF\).ttf);
 }

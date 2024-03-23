@@ -5,4 +5,5 @@ body {
     background: url(../images/about_bg.png) no-repeat center;
     background-size: cover;
     line-height: 1;
+    color: #fff;
 }

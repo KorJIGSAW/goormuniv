@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyPage</title>
+  <style>
+    /* 스타일 시트의 내용을 여기에 추가합니다 */
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .background {
+      display: flex; /* flex 레이아웃 적용 */
+      flex-direction: column; /* 자식 요소를 세로 방향으로 정렬 */
+      justify-content: center; /* 상하 가운데 정렬 */
+      background-color: #000312;
+      height: 100%;
+    }
+
+    .logo {
+      cursor: pointer;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .navbar .logo:hover, a:hover {
+      color: #F6BD60;
+    }
+
+    .commentsContainer {
+      position: fixed; /* 위치를 화면에 고정 */
+      top: 50%; /* 상단에서부터 50% 위치에 배치 */
+      left: 0; /* 화면의 왼쪽 끝에 배치 */
+      transform: translateY(-50%); /* Y축으로 -50%만큼 이동시켜 상하 중앙에 위치 */
+      display: flex; /* flex 레이아웃 추가 */
+      flex-direction: column; /* 자식 요소를 세로 방향으로 정렬 */
+      justify-content: space-between; /* 사이드바 내부에서 위아래 공백 생성 */
+      flex: 0 1 auto; 
+      width: 20%;
+      background-color: #31333F;
+      padding: 10px; /* 사이드바 내부 공간 조정 */
+      color: white;
+      box-sizing: border-box;
+      border-radius: 20px;
+    }
+
+    .notification {
+      margin: 30px;
+      padding: 10px;
+      color: white;
+      text-align: center; /* 텍스트 중앙 정렬 */
+    }
+
+    .notifications {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-y: auto; /* 내용이 길어질 경우 스크롤 생성 */
+    }
+
+    .responseContainer {
+      position: absolute; /* 페이지 가운데에 위치하도록 설정 */
+      top: 50%; /* 상단으로부터 50%의 위치에 배치 */
+      left: 50%; /* 좌측으로부터 50%의 위치에 배치 */
+      transform: translate(-50%, -50%); /* 정확한 중앙 정렬을 위해 변환 사용 */
+      width: 800px;
+      height: 400px;
+      background-color: #31333F;
+      padding: 20px;
+      box-sizing: border-box;
+      border-radius: 20px;
+      color: white; /* 텍스트 색상 변경 */
+      text-align: center; /* 텍스트 중앙 정렬 */
+      overflow-y: auto; /* 내용이 길어질 경우 스크롤 생성 */
+    }
+
+    @media (max-width: 750px) {
+      .responseContainer {
+        position: relative;
+        transform: none;
+        margin: 0 auto;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+      }
+
+      .commentsContainer {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        font-size: 0.8em;
+      }
+
+      .notification {
+        font-size: 0.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="responseContainer" id="responseContainer"></div>
+  <div id="webtoonsContainer" class="commentsContainer"></div>
+
+  <script>
+    const ListapiURL = 'https://decalcomanie-dev-yebvymrbqa-du.a.run.app/feedback/list';
+    const SelectapiURL = 'https://decalcomanie-dev-yebvymrbqa-du.a.run.app/feedback/single';
+    let token = localStorage.getItem('token'); // 토큰을 전역 변수로 선언하여 재사용
+
+    function fetchList() {
+      fetch(ListapiURL, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response      => response.json())
+      .then(data => displayWebtoons(data))
+      .catch(error => console.error('데이터를 가져오는 중 문제가 발생했습니다:', error));
+    }
+
+    function fetchSelect(webtoonTitle, feedbackNumber) {
+      fetch(SelectapiURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ webtoon_title: webtoonTitle, feedback_number: feedbackNumber })
+      })
+      .then(response => response.json())
+      .then(data => displayResponse(data))
+      .catch(error => console.error('데이터를 가져오는 중 문제가 발생했습니다:', error));
+    }
+
+    function displayWebtoons(data) {
+      var container = document.getElementById('webtoonsContainer'); // 수정
+      container.innerHTML = ''; // 수정
+      data.webtoons.forEach(webtoon => {
+        const webtoonElement = document.createElement('div');
+        webtoonElement.classList.add('webtoon');
+        webtoonElement.textContent = `${webtoon.title} ${webtoon.subtitle}`;
+        console.log(webtoon.title, webtoon.number, webtoon.subtitle);
+        webtoonElement.onclick = () => fetchSelect(webtoon.title, webtoon.number); // 웹툰 클릭 시 fetchSelect 함수 호출
+        container.appendChild(webtoonElement);
+      });
+    }
+
+    function displayResponse(data) {
+      const container = document.getElementById('responseContainer');
+      container.innerHTML = '';
+      // 여기에서 data를 기반으로 응답을 화면에 표시하는 구체적인 코드
+      // 예시: data.message를 화면에 표시
+      const responseElement = document.createElement('div');
+      responseElement.textContent = `${data.feedback}`; // 단순 예시로 응답의 메시지를 출력
+      container.appendChild(responseElement);
+    }
+
+    window.onload = function() {
+      // 페이지 로드 시 로그인 여부 확인 후 리스트 가져오기
+      if(token){
+        fetchList();
+        window.location.href = accessToken;
+      }
+      else{
+        console.log("로그인이 필요합니다.");
+      }
+    }
+
+    // 사이드바에 공지사항을 동적으로 추가하는 함수
+    function addNotification(title, round) {
+      const notificationsArea = document.getElementById('notifications');
+      const notificationDiv = document.createElement('div');
+      notificationDiv.className = 'notification';
+      notificationDiv.innerHTML = `<strong>${title} ${round}</strong>`;
+      notificationsArea.appendChild(notificationDiv);
+    }
+    document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.responseContainer').forEach(container => {
+                container.innerHTML = container.innerHTML.replace('응답: ', '');
+            });
+        });
+
+    </script>
+</div>
+</body>
+</html>

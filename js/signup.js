@@ -50,7 +50,7 @@ function login() {
             const accessToken = data.accessToken;
             localStorage.setItem('token', accessToken); // 로컬 스토리지에 토큰 저장
             console.log(accessToken);
-            window.location.href = 'URL_link2.html?token=' + accessToken;;
+            window.location.href = 'URL_link2.html?token=' + accessToken;
         })
         .catch((error) => {
             console.error('로그인 실패:', error);
