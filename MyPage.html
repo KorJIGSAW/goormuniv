@@ -33,16 +33,85 @@
     </style>
 </head>
 <body>
+    <!--토큰값을 가져오기 위한 임시의 회원가입 로그인 코드, 나중에 합칠 때 버려야할 부분-->
+    <div class="container">
+        <h2>회원가입</h2>
+        <input type="text" id="signupName" placeholder="이름">
+        <input type="email" id="signupEmail" placeholder="이메일">
+        <input type="password" id="signupPassword" placeholder="비밀번호">
+        <button onclick="signup()">회원가입</button>
+
+        <h2>로그인</h2>
+        <input type="email" id="loginEmail" placeholder="이메일">
+        <input type="password" id="loginPassword" placeholder="비밀번호">
+        <button onclick="login()">로그인</button>
+    </div>
+    <!--데이터 가져오기 버튼을 이용한 임시버튼, 나중에 코드 합칠 때 삭제-->
+    <div><button id = "fetchDataButton">데이터 가져오기</div>
+    <!--데이터 가져오기 버튼을 이용한 임시버튼, 나중에 코드 합칠 때 삭제-->
+    <!--토큰값을 가져오기 위한 임시의 회원가입 로그인 코드, 나중에 합칠 때 버려야할 부분-->
+    
     <h1>내가 분석한 댓글들</h1>
     <div id="commentsContainer"></div>
     <div id="responseContainer"></div>
 
+    <script>
+        // 회원가입 함수
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
     
-    <!-- <script>
-        const ListapiURL = '여기에 리스트 피드백 값 URL앤드포인트값 들어와야함';
-        const SelectapiURL = '여기에 선택 피드백 값 URL앤드포인트값 들어와야함';
-        const token = localStorage.getItem('token');
-
+            fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('회원가입 성공: ' + data.message);
+                })
+                .catch((error) => {
+                    console.error('회원가입 실패:', error);
+                });
+        }
+    
+        // 로그인 함수
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+    
+            fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const accessToken = data.accessToken;
+                    localStorage.setItem('token', accessToken); // 로컬 스토리지에 토큰 저장
+                    console.log(accessToken);
+                })
+                .catch((error) => {
+                    console.error('로그인 실패:', error);
+                });
+        }
+    
+        const ListapiURL = 'https://decalcomanie-dev-yebvymrbqa-du.a.run.app/feedback/list';
+        const SelectapiURL = 'https://decalcomanie-dev-yebvymrbqa-du.a.run.app/feedback/single';
+        let token = localStorage.getItem('token'); // 토큰을 전역 변수로 선언하여 재사용
+    
         function fetchList() {
             fetch(ListapiURL, {
                 method: 'GET',
@@ -52,10 +121,10 @@
                 }
             })
             .then(response => response.json())
-            .then(data => displayComments(data))
+            .then(data => displayWebtoons(data))
             .catch(error => console.error('데이터를 가져오는 중 문제가 발생했습니다:', error));
         }
-
+    
         function fetchSelect(webtoonTitle, feedbackNumber) {
             fetch(SelectapiURL, {
                 method: 'POST',
@@ -68,35 +137,46 @@
             .then(response => response.json())
             .then(data => displayResponse(data))
             .catch(error => console.error('데이터를 가져오는 중 문제가 발생했습니다:', error));
-        }
+    }
 
-        function displayComments(data) {
-            const container = document.getElementById('commentsContainer');
-            container.innerHTML = '';
-            data.forEach(comment => {
-                const commentElement = document.createElement('div');
-                commentElement.classList.add('comment');
-                commentElement.textContent = comment.content;
-                commentElement.onclick = () => fetchSelect(comment.webtoon_title, comment.feedback_number);
-                container.appendChild(commentElement);
-            });
-        }
+    function displayWebtoons(data) {
+        var container = document.getElementById('commentsContainer');
+        container.innerHTML = '';
+        data.webtoons.forEach(webtoon => {
+            const webtoonElement = document.createElement('div');
+            webtoonElement.classList.add('webtoon');
+            webtoonElement.textContent = `${webtoon.title} ${webtoon.subtitle}`;
+            console.log(webtoon.title, webtoon.number, webtoon.subtitle);
+            webtoonElement.onclick = () => fetchSelect(webtoon.title, webtoon.number); // 웹툰 클릭 시 fetchSelect 함수 호출
+            container.appendChild(webtoonElement);
+        });
+    }
 
-        function displayResponse(data) {
-            const container = document.getElementById('responseContainer');
-            container.innerHTML = '';
-            // 여기에서 data를 기반으로 응답을 화면에 표시하는 코드를 작성하세요.
-            // 예시:
-            const responseElement = document.createElement('div');
-            responseElement.textContent = JSON.stringify(data, null, 2); // 단순 예시로 JSON 문자열을 예쁘게 출력
-            container.appendChild(responseElement);
-        }
+    function displayResponse(data) {
+        const container = document.getElementById('responseContainer');
+        container.innerHTML = '';
+        // 여기에서 data를 기반으로 응답을 화면에 표시하는 구체적인 코드
+        // 예시: data.message를 화면에 표시
+        const responseElement = document.createElement('div');
+        responseElement.textContent = `응답: ${data.feedback}`; // 단순 예시로 응답의 메시지를 출력
+        container.appendChild(responseElement);
+    }
 
-        window.onload = function() {
+    window.onload = function() {
+        // 페이지 로드 시 로그인 여부 확인 후 리스트 가져오기
+        if(token){
             fetchList();
         }
-    </script> -->
+        else{
+            console.log("로그인이 필요합니다.");
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        displayWebtoons();
+    });
+</script>
+
+   
     
 </body>
 </html>
-ㅏㅓㅎ
