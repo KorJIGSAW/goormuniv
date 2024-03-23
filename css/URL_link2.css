@@ -178,7 +178,7 @@ button#fetchButton,
 
 }
 
-/* 모바일 버전 */
+/* PC 버전 */
 @media (min-width: 1024px) {
     .chat-box {
         max-width: 80%;
