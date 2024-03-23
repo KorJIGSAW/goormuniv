@@ -1,0 +1,18 @@
+.password-toggle {
+    cursor: pointer;
+    /* 가시성 토글 버튼에 커서 스타일 추가 */
+}
+
+.input-invalid {
+    border-color: red;
+    /* 유효하지 않은 입력 필드 테두리 색상 */
+}
+
+.input-invalid+.validation-message {
+    color: red;
+    /* 유효성 검사 메시지 색상 */
+    font-size: 0.8rem;
+    /* 메시지 크기 */
+    margin-top: 5px;
+    /* 메시지와 입력 필드 간 간격 */
+}

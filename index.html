@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title>댓칼코마니</title>
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+<link rel="stylesheet" type="text/css" href="css/index.css">
+<link rel="stylesheet" type="text/css" href="css/login_modal.css">
+<link rel="stylesheet" type="text/css" href="css/signup.css">
+<link rel="shortcut icon" href="images/body_bg.png">
+<script src="js/jquery.min.js"></script>
+<script src="js/index.js"></script>
+<script src="js/signup.js"></script>
+</head>
+<body>
+	<div id="wrap">
+        <header class="header">
+            <h1 class="logo">
+                <a href="index.html">댓칼코마니<br></a>
+            </h1>
+            <nav class="nav">
+                <ul class="gnb">
+                    <li><a href="URL_link2.html">BACKGROUD</a><span class="sub_menu_toggle_btn">하위 메뉴 토글 버튼</span></li>
+                    <li><a href="about.html">ABOUT</a><span class="sub_menu_toggle_btn">하위 메뉴 토글 버튼</span></li>
+                    <li><a href="#" onclick="document.getElementById('loginmodal').style.display='block'">START NOW</a><span class="sub_menu_toggle_btn">하위 메뉴 토글 버튼</span></li>
+                </ul>
+            </nav>
+            <span class="menu_toggle_btn">전체 메뉴 토글 버튼</span>
+        </header>
+        <section class="content_section">
+            <button type="button" class="button" onclick="document.getElementById('loginmodal').style.display='block'">START NOW &nbsp;&nbsp;&nbsp;&nbsp;→</button>
+        </section>
+    </div>
+
+     <!-- login Modal -->
+     <div id="loginmodal" class="modal">
+        <div class="container">
+            <span class="close" onclick="document.getElementById('loginmodal').style.display='none'">&times;</span>
+            <div class="header">
+                <div class="circle"></div>
+                <h2 class="welcome">댓칼코마니에 오신 것을<br>환영합니다</h2>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">이메일</label>
+                    <input type="email" id="loginEmail" name="loginEmail" placeholder="이메일" required>
+                </div>
+                <div class="form-group sec-form">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="loginPassword" name="loginPassword" placeholder="비밀번호" required>
+                </div>
+                <p><a href="#">비밀번호를 잊으셨나요?</a></p>
+                <button type="button" onclick="login();">로그인</button>
+            </form>
+            <p class="pc_p">───────── 또는 ─────────</p>
+            <p class="phone_p">────── 또는 ──────</p>
+            <button type="button" onclick="document.getElementById('loginmodal').style.display='none'; document.getElementById('signupModal').style.display='block';">회원가입</button>
+        </div>
+    </div>
+
+    <!-- signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="container">
+            <span class="close" onclick="document.getElementById('signupModal').style.display='none'">&times;</span>
+            <div class="header">
+                <div class="circle"></div>
+                <h2 class="welcome">댓칼코마니에 오신 것을<br>환영합니다</h2>
+            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="signupName" name="signupName" placeholder="이름" required>
+                </div>
+                <div class="form-group sec-form">
+                    <label for="email">이메일</label>
+                    <input type="email" id="signupEmail" name="signupEmail" placeholder="이메일" required>
+                </div>
+                <div class="form-group th-form">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="signupPassword" name="signupPassword" placeholder="비밀번호" required>
+                </div>
+                <p><a href="#">비밀번호를 잊으셨나요?</a></p>
+                    <button type="button">로그인</button>
+                  </form>
+                <p class="pc_p">───────── 또는 ─────────</p>
+                <p class="phone_p">────── 또는 ──────</p>
+                <button type="button" onclick="signup(); openSignUpModal(); ">회원가입</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+ 
+</script>
+</html>

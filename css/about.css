@@ -1,0 +1,8 @@
+/* 기본 CSS */
+body {
+    height: 100vh;
+    font-family: NanumGothic, 나눔고딕, 'Nanum Gothic', '맑은 고딕', HelveticaNeue, DroidSans, Sans-serif, Helvetica;
+    background: url(../images/about_bg.png) no-repeat center;
+    background-size: cover;
+    line-height: 1;
+}
