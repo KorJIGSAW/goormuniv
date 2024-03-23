@@ -104,6 +104,19 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <h2>회원가입</h2>
+        <input type="text" id="signupName" placeholder="이름">
+        <input type="email" id="signupEmail" placeholder="이메일">
+        <input type="password" id="signupPassword" placeholder="비밀번호">
+        <button onclick="signup()">회원가입</button>
+
+        <h2>로그인</h2>
+        <input type="email" id="loginEmail" placeholder="이메일">
+        <input type="password" id="loginPassword" placeholder="비밀번호">
+        <button onclick="login()">로그인</button>
+    </div>
+
     <div class="chat-box" id="chatBox">
         <!-- 대화 메시지가 여기에 동적으로 추가됩니다 -->
     </div>
@@ -112,6 +125,68 @@
     <div id="result"></div>     
 
     <script>
+        // 회원가입 함수
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('회원가입 성공: ' + data.message);
+                })
+                .catch((error) => {
+                    console.error('회원가입 실패:', error);
+                });
+        }
+
+        // 로그인 함수
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const accessToken = data.accessToken;
+                    localStorage.setItem('token', accessToken); // 로컬 스토리지에 토큰 저장
+                    console.log(accessToken);
+                })
+                .catch((error) => {
+                    console.error('로그인 실패:', error);
+                });
+        };
+
+        // 접근하기 버튼 클릭 이벤트
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+            console.log(token);
+        });
+
         function addMessageToChatBox(message, type, isHtml = false) {
             const chatBox = document.getElementById('chatBox');
             const messageElement = document.createElement('div');
@@ -127,7 +202,7 @@
             
             messageElement.appendChild(textElement);
             chatBox.appendChild(messageElement);
-        }
+        };
 
         // 페이지 로딩 시 기본 메시지 추가
         window.onload = function() {
@@ -145,14 +220,18 @@
             //사용자가 입력한 URL을 사용자의 말풍선으로 표시
             addMessageToChatBox(urlInput, 'user');
     
-            const apiEndpoint = 'https://decalcomanie-yebvymrbqa-du.a.run.app/chat';
+            const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+            const apiEndpoint = 'https://decalcomanie-dev-yebvymrbqa-du.a.run.app/chat'; //URL보내주고 OpenAI로 연결 후 답변받는 앤드포인트
             const data = {
                 url: urlInput
             };
             fetch(apiEndpoint, {
                 method: 'POST',
                 headers: {
+                    // accessToken값에 로컬스토리지의 token값을 넣고 
                     'Content-Type': 'application/json',
+                    // 토큰 값 전달 
+                    'Authorization': 'Bearer ' + token
                 },
                 body: JSON.stringify(data)
             })
@@ -162,18 +241,12 @@
                 }
                 return response.json();
             })
-            // .then(data => {
-            //     console.log(data);
-            //     // API 호출 결과를 사용자에게 표시
-            //     addMessageToChatBox(JSON.stringify(data, null, 2), 'assistant');
-            // })
             .then(data => {
                 console.log(data);
                 const feedbackWithLineBreaks = data.feedback.replace(/(?<!^)(\d+\.\s)/g, '\n<br>$1');
                 // API 호출 결과 중 "feedback" 키에 해당하는 값만 사용자에게 표시
                 addMessageToChatBox(feedbackWithLineBreaks, 'assistant', true);
             })
-
             .catch(error => {
                 console.error('API 호출에 실패했습니다.', error);
                 // 에러 메시지를 사용자에게 표시

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>말풍선 스타일 대화상자</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .chat-box {
+            max-width: 90%;
+            margin: auto;
+        }
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .user-message .text, .assistant-message .text {
+            border-radius: 20px;
+            padding: 10px 15px;
+            max-width: 70%;
+            word-wrap: break-word;
+            margin: 4px 0;
+        }
+        .user-message .text {
+            background-color: #DCF8C6; /* 카카오톡 사용자 말풍선 색상 */
+            align-self: flex-end;
+        }
+        .assistant-message .text {
+            background-color: #ffffff; /* 카카오톡 비서 말풍선 색상 */
+            align-self: flex-start;
+        }
+        input#urlInput, button#fetchButton, #result {
+            width: 90%;
+            padding: 10px;
+            margin: 20px auto;
+            display: block;
+        }
+        input#urlInput {
+            width: calc(70% - 40px);
+            border: 1px solid #ccc;
+            border-radius: 20px;
+        }
+        button#fetchButton {
+            width: 28%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .chat-message {
+                flex-direction: column;
+            }
+            input#urlInput, button#fetchButton {
+                width: calc(100% - 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-box" id="chatBox">
+        <!-- 대화 메시지가 여기에 동적으로 추가됩니다 -->
+    </div>
+    <input type="text" id="urlInput" placeholder="웹툰 URL을 입력해주세요">
+    <button id="fetchButton">결과 보기</button>
+    <div id="result"></div>
+
+    <script>
+        function addMessageToChatBox(message, type) {
+            const chatBox = document.getElementById('chatBox');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', type + '-message');
+            
+            const textElement = document.createElement('div');
+            textElement.classList.add('text');
+            textElement.textContent = message;
+            
+            messageElement.appendChild(textElement);
+            chatBox.appendChild(messageElement);
+        }
+
+        // 페이지 로딩 시 기본 메시지 추가
+        window.onload = function() {
+            addMessageToChatBox('안녕하세요!', 'assistant');
+            addMessageToChatBox('원하시는 웹툰의 URL을 입력하세요!', 'assistant');
+        };
+    
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const urlInput = document.getElementById('urlInput').value;
+            if (!urlInput) {
+                alert('URL을 입력해주세요.');
+                return;
+            }
+    
+            const apiEndpoint = 'http://34.64.213.235:8000/crawl';
+            const data = {
+                url: urlInput
+            };
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 올바르지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                // API 호출 결과를 사용자에게 표시
+                addMessageToChatBox(JSON.stringify(data, null, 2), 'assistant');
+            })
+            .catch(error => {
+                console.error('API 호출에 실패했습니다.', error);
+                // 에러 메시지를 사용자에게 표시
+                addMessageToChatBox('API 호출에 실패했습니다: ' + error, 'user');
+            });
+        });
+    </script>
+
+</body>
+</html>

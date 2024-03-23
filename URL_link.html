@@ -96,37 +96,43 @@
         displayInitialMessages();
     
         document.getElementById('fetchButton').addEventListener('click', async function() {
-            const urlInput = document.getElementById('urlInput').value;
-            if (!urlInput) {
-                alert('URL을 입력해주세요.');
-                return;
-            }
-    
-            try {
-                const response = await fetch('http://34.64.213.235:8000/crawl', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({url: urlInput}),
-                });
-    
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 올바르지 않습니다.');
-                }
-    
-                const resultData = await response.json();
-                const resultMessage = `입력하신 URL에 대한 처리 결과입니다: ${resultData.message}`;
-                addMessageToChatBox(resultMessage, 'assistant');
-            } catch (error) {
-                console.error('요청 중 에러가 발생했습니다:', error);
-                const errorMessage = '처리 중 에러가 발생했습니다. 다시 시도해주세요.';
-                addMessageToChatBox(errorMessage, 'assistant');
-            }
-    
-            // 입력 후 입력 필드 초기화
-            document.getElementById('urlInput').value = '';
+    const urlInput = document.getElementById('urlInput').value;
+    if (!urlInput) {
+        alert('URL을 입력해주세요.');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://34.64.213.235:8000/crawl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({url: urlInput}),
         });
+
+        if (!response.ok) {
+            throw new Error('네트워크 응답이 올바르지 않습니다.');
+        }
+
+        const resultData = await response.json();
+
+        // 응답 데이터에서 필요한 정보를 접근하는 방식을 확인하세요.
+        // 예를 들어, resultData.result 같은 식으로 접근해야 할 수도 있습니다.
+        if (resultData) {
+            console.log('처리 결과:', resultData);
+            // 대화 상자에 메시지 추가
+            addMessageToChatBox(`입력하신 URL에 대한 처리 결과입니다: ${resultData}`, 'assistant');
+        } else {
+            throw new Error('응답 데이터가 비어있습니다.');
+        }
+
+    } catch (error) {
+        console.error('요청을 처리하는 중에 오류가 발생했습니다:', error);
+        addMessageToChatBox(`처리 중 오류가 발생했습니다: ${error.message}`, 'assistant');
+    }
+});
+
     </script>
 </body>
 </html>

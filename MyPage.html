@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+</head>
+<body>
+    <h1>내가 분석한 댓글들</h1>
+    <div id="commentsContainer"></div>
+
+    <script>
+        // API 호출을 위한 URL
+        const apiURL = 'https://example.com/api/comments';
+
+        // 사용자의 액세스 토큰
+        const accessToken = '여기에액세스토큰';
+
+        // API를 호출하여 데이터 가져오기
+        function fetchComments() {
+            fetch(`${apiURL}`, {
+                method: 'GET', // GET 요청
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}` // 인증 토큰 추가
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 올바르지 않습니다.');
+                }
+                return response.json(); // 응답 데이터를 JSON으로 변환
+            })
+            .then(data => {
+                displayComments(data); // 데이터를 화면에 표시
+            })
+            .catch(error => {
+                console.error('데이터를 가져오는 중 문제가 발생했습니다:', error);
+            });
+        }
+
+        // 데이터를 화면에 표시하는 함수
+        function displayComments(data) {
+            const container = document.getElementById('commentsContainer');
+            container.innerHTML = ''; // 컨테이너 초기화
+            data.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.textContent = comment.content; // 예를 들어, 댓글 내용은 'content' 속성에 있다고 가정
+                container.appendChild(commentElement);
+            });
+        }
+
+        // 페이지 로드 시 댓글 가져오기
+        window.onload = function() {
+            fetchComments();
+        }
+    </script>
+</body>
+</html>
