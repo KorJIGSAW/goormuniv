@@ -4,68 +4,87 @@
         document.getElementById('signupModal').style.display = 'none';
     }
     
-    // 회원가입 함수
-    function signup() {
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-    
-        // API 엔드포인트로 POST 요청 보내기
-        //fetch('https://decalcomanie-yebvymrbqa-du.a.run.app/signup', {
-        fetch('http://34.64.213.235:8000/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: name,
-                email: email,
-                password: password,
-            }),
+ // 회원가입 함수
+ function signup() {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+
+    fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/signup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password,
+        }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            alert('회원가입 성공: ' + data.message);
         })
-            .then(response => response.json())
-            .then(data => {
-                alert('회원가입 성공: ' + data.message);
-            })
-            .catch((error) => {
-                console.error('회원가입 실패:', error);
-            });
-    }
-    
-    // 로그인 함수
-    function login() {
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-    
-        // API 엔드포인트로 POST 요청 보내기
-        //   fetch('https://decalcomanie-yebvymrbqa-du.a.run.app/login', {
-        fetch('http://34.64.213.235:8000/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            }),
+        .catch((error) => {
+            console.error('회원가입 실패:', error);
+        });
+}
+
+// 로그인 함수
+function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password,
+        }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            const accessToken = data.accessToken;
+            localStorage.setItem('token', accessToken); // 로컬 스토리지에 토큰 저장
+            console.log(accessToken);
+            window.location.href = 'URL_link2.html?token=' + accessToken;;
         })
-            .then(response => response.json()) //수정 코드
-            // .then(response => {
-            //     return response.json();
-            // })
-            .then(data => {
-                const accessToken = data.accessToken;
-                //console.log(accessToken);
-                //수정 코드
-                if (accessToken) {
-                    console.log('로그인 성공! Access Token:', accessToken);
-                    // 여기서부터는 access token을 활용하여 필요한 작업을 수행할 수 있습니다.
-                } else {
-                    console.error('로그인 실패: access token이 없습니다.');
-                }
-            })
-    
-            .catch((error) => {
-                console.error('로그인 실패:', error);
-            });
+        .catch((error) => {
+            console.error('로그인 실패:', error);
+        });
+}
+
+
+
+// 접근하기 버튼 클릭 이벤트
+/* document.getElementById('fetchDataButton').addEventListener('click', function() {
+    const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+    if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
     }
+    console.log(token);
+
+    fetch('http://34.64.213.235:8000/hi', {
+        method: 'GET',
+        headers: {
+            'accessToken': token,
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 올바르지 않습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('요청 중 에러 발생:', error);
+        });
+}); */

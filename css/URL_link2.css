@@ -4,31 +4,29 @@ body {
     background: url(../images/URL_bg.png) no-repeat center;
     background-size: cover;
     line-height: 1;
-    background-color: #000;
 }
 
 .chat-box {
-    max-width: 90%;
-    margin: auto;
+    max-width: 80%;
 }
 
 .chat-message {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .user-message .text,
 .assistant-message .text {
     border-radius: 20px;
-    padding: 20px 70px;
-    max-width: 70%;
+    padding: 20px 50px;
+    max-width: 80%;
     word-wrap: break-word;
     margin: 4px 0;
 }
 
 .user-message .text {
-    background-color: #DCF8C6;
+    background-color: #135bce;
     /* 카카오톡 사용자 말풍선 색상 */
     align-self: flex-end;
 }
@@ -56,12 +54,12 @@ input#urlInput {
 }
 
 button#fetchButton {
-    width: 1%;
+    width: 100%;
     background-color: #0830E8;
     color: white;
     border: none;
     padding: 10px;
-    margin-top: 40px;
+    margin-top: 120px;
     border-radius: 20px;
     cursor: pointer;
 }
@@ -81,37 +79,46 @@ button#fetchButton {
     /* 말풍선 둥근 모서리 */
 }
 
-/* 비서 말풍선 왼쪽 상단 튀어나옴 효과 */
-.assistant-message .text::before {
-    content: "";
-    position: absolute;
-    top: 14px;
-    left: 4px;
-    /* 말풍선 왼쪽으로 튀어나옴 */
-    width: 0;
-    height: 0;
-    border: 10px solid transparent;
-    /* 비서 말풍선 배경색과 동일 */
-    border-left: 0;
-    margin-top: 6px;
-    margin-left: -10px;
+.chat-message {
+    flex-direction: column;
 }
 
-/* 사용자 말풍선 오른쪽 상단 튀어나옴 효과 */
-.user-message .text::before {
-    content: "";
-    position: absolute;
-    top: 10px;
-    right: 4px;
-    /* 말풍선 오른쪽으로 튀어나옴 */
-    width: 0;
-    height: 0;
-    border: 10px solid transparent;
-    border-left-color: #DCF8C6;
-    /* 사용자 말풍선 배경색과 동일 */
-    border-right: 0;
-    margin-top: 6px;
-    margin-right: -10px;
+input#urlInput,
+button#fetchButton {
+    width: calc(80% - 40px);
+}
+
+input#urlInput {
+    width: 85%;
+    padding: 15px;
+    margin: 15px auto;
+    display: block;
+    font-size: 13px;
+}
+
+button#fetchButton,
+#result {
+    width: 50%;
+    padding: 15px;
+    margin: 15px auto;
+    display: block;
+    font-size: 13px;
+}
+
+/* 말풍선 기본 스타일 */
+.chat-message .text {
+    position: relative;
+    /* 가상 요소 위치 기준 */
+    border-radius: 30px;
+    /* 말풍선 둥근 모서리 */
+    font-size: 0.7rem;
+}
+
+.chatbox_section {
+    width: 90%;
+    margin: 0 auto;
+    padding-top: 80px;
+    color: #fff;
 }
 
 /* 반응형 태블릿 버전 */
@@ -132,6 +139,17 @@ button#fetchButton {
         display: block;
         font-size: 13px;
     }
+
+    button#fetchButton {
+        width: 20%;
+        background-color: #0830E8;
+        color: white;
+        border: none;
+        padding: 15px;
+        margin-top: 30px;
+        border-radius: 20px;
+        cursor: pointer;
+    }
     
     button#fetchButton,
     #result {
@@ -151,42 +169,87 @@ button#fetchButton {
         font-size: 10px;
     }
 
+    .chatbox_section {
+        width: 50%;
+        margin: 0 auto;
+        padding-top: 80px;
+        color: #fff;
+    }
+
 }
 
 /* 모바일 버전 */
-@media (min-width: 320px) {
-    .chat-message {
-        flex-direction: column;
-    }
-
-    input#urlInput,
-    button#fetchButton {
-        width: calc(80% - 40px);
-    }
-
-    input#urlInput {
-        width: 85%;
-        padding: 15px;
-        margin: 15px auto;
-        display: block;
-        font-size: 13px;
+@media (min-width: 1024px) {
+    .chat-box {
+        max-width: 80%;
     }
     
+    .chat-message {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    
+    .user-message .text,
+    .assistant-message .text {
+        border-radius: 20px;
+        padding: 20px 50px;
+        max-width: 80%;
+        word-wrap: break-word;
+        margin: 4px 0;
+    }
+    
+    .user-message .text {
+        background-color: #135bce;
+        /* 카카오톡 사용자 말풍선 색상 */
+        align-self: flex-end;
+    }
+    
+    .assistant-message .text {
+        background-color: rgba(217, 217, 217, 0.22);
+        /* 카카오톡 비서 말풍선 색상 */
+        align-self: flex-start;
+    }
+    
+    input#urlInput,
     button#fetchButton,
     #result {
-        width: 50%;
-        padding: 15px;
-        margin: 15px auto;
+        width: 80%;
+        padding: 10px;
+        margin: 20px auto;
         display: block;
-        font-size: 13px;
     }
-
+    
+    input#urlInput {
+        width: calc(100% - 40px);
+        border: 1px solid #ccc;
+        margin-top: 100px;
+        border-radius: 30px;
+    }
+    
+    button#fetchButton {
+        width: 120px;
+        background-color: #0830E8;
+        color: white;
+        border: none;
+        padding: 15px;
+        margin-top: 30px;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+    
+    .chatbox_section {
+        width: 60%;
+        margin: 0 auto;
+        padding-top: 80px;
+        color: #fff;
+    }
+    
     /* 말풍선 기본 스타일 */
     .chat-message .text {
         position: relative;
         /* 가상 요소 위치 기준 */
         border-radius: 30px;
         /* 말풍선 둥근 모서리 */
-        font-size: 0.7rem;
     }
 }

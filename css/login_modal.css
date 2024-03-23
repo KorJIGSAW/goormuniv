@@ -68,7 +68,7 @@
   text-align: left;
 }
 
-input[type="text"],
+input[type="email"],
 input[type="password"] {
   width: 80%;
   padding: 10px;
