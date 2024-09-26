@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>말풍선 스타일 대화상자</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #000000;
+        }
+        .chat-box {
+            max-width: 90%;
+            margin: auto;
+        }
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .user-message .text, .assistant-message .text {
+            border-radius: 20px;
+            padding: 10px 15px;
+            max-width: 70%;
+            word-wrap: break-word;
+            margin: 4px 0;
+        }
+        .user-message .text {
+            background-color: #DCF8C6; /* 카카오톡 사용자 말풍선 색상 */
+            align-self: flex-end;
+            opacity: 0.5;
+        }
+        .assistant-message .text {
+            background-color: #ffffff; /* 카카오톡 비서 말풍선 색상 */
+            align-self: flex-start;
+            opacity: 0.5;
+        }
+        input#urlInput, button#fetchButton, #result {
+            width: 90%;
+            padding: 10px;
+            margin: 20px auto;
+            display: block;
+            opacity: 0.5;
+        }
+        input#urlInput {
+            width: calc(70% - 40px);
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            opacity: 0.5;
+        }
+        button#fetchButton {
+            width: 28%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .chat-message {
+                flex-direction: column;
+            }
+            input#urlInput, button#fetchButton {
+                width: calc(100% - 40px);
+            }
+        }
+        /* 말풍선 기본 스타일 */
+        .chat-message .text {
+            position: relative; /* 가상 요소 위치 기준 */
+            border-radius: 16px; /* 말풍선 둥근 모서리 */
+        }
+
+        /* 비서 말풍선 왼쪽 상단 튀어나옴 효과 */
+        .assistant-message .text::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 4px; /* 말풍선 왼쪽으로 튀어나옴 */
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-right-color: #ffffff; /* 비서 말풍선 배경색과 동일 */
+            border-left: 0;
+            margin-top: 6px;
+            margin-left: -10px;
+        }
+
+        /* 사용자 말풍선 오른쪽 상단 튀어나옴 효과 */
+        .user-message .text::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 4px; /* 말풍선 오른쪽으로 튀어나옴 */
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-left-color: #DCF8C6; /* 사용자 말풍선 배경색과 동일 */
+            border-right: 0;
+            margin-top: 6px;
+            margin-right: -10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>회원가입</h2>
+        <input type="text" id="signupName" placeholder="이름">
+        <input type="email" id="signupEmail" placeholder="이메일">
+        <input type="password" id="signupPassword" placeholder="비밀번호">
+        <button onclick="signup()">회원가입</button>
+
+        <h2>로그인</h2>
+        <input type="email" id="loginEmail" placeholder="이메일">
+        <input type="password" id="loginPassword" placeholder="비밀번호">
+        <button onclick="login()">로그인</button>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <!-- 대화 메시지가 여기에 동적으로 추가됩니다 -->
+    </div>
+    <input type="text" id="urlInput" placeholder="웹툰 URL을 입력해주세요">
+    <button id="fetchButton">결과 보기</button>
+    <div id="result"></div>     
+
+    <script>
+        // 회원가입 함수
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('회원가입 성공: ' + data.message);
+                })
+                .catch((error) => {
+                    console.error('회원가입 실패:', error);
+                });
+        }
+
+        // 로그인 함수
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            fetch('https://decalcomanie-dev-yebvymrbqa-du.a.run.app/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const accessToken = data.accessToken;
+                    localStorage.setItem('token', accessToken); // 로컬 스토리지에 토큰 저장
+                    console.log(accessToken);
+                })
+                .catch((error) => {
+                    console.error('로그인 실패:', error);
+                });
+        };
+
+        // 접근하기 버튼 클릭 이벤트
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+            console.log(token);
+        });
+
+        function addMessageToChatBox(message, type, isHtml = false) {
+            const chatBox = document.getElementById('chatBox');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', type + '-message');
+            
+            const textElement = document.createElement('div');
+            textElement.classList.add('text');
+            if (isHtml) {
+                textElement.innerHTML = message; // HTML로 처리
+            } else {
+                textElement.textContent = message; // 텍스트로 처리
+            }
+            
+            messageElement.appendChild(textElement);
+            chatBox.appendChild(messageElement);
+        };
+
+        // 페이지 로딩 시 기본 메시지 추가
+        window.onload = function() {
+            addMessageToChatBox('안녕하세요!', 'assistant');
+            addMessageToChatBox('댓글을 보고싶은 웹툰의 URL을 입력해주세요.', 'assistant');
+        };
+    
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const urlInput = document.getElementById('urlInput').value;
+            if (!urlInput) {
+                alert('URL을 입력해주세요.');
+                return;
+            }
+
+            //사용자가 입력한 URL을 사용자의 말풍선으로 표시
+            addMessageToChatBox(urlInput, 'user');
+    
+            const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+            const apiEndpoint = 'https://decalcomanie-dev-yebvymrbqa-du.a.run.app/chat'; //URL보내주고 OpenAI로 연결 후 답변받는 앤드포인트
+            const data = {
+                url: urlInput
+            };
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    // accessToken값에 로컬스토리지의 token값을 넣고 
+                    'Content-Type': 'application/json',
+                    // 토큰 값 전달 
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 올바르지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                const feedbackWithLineBreaks = data.feedback.replace(/(?<!^)(\d+\.\s)/g, '\n<br>$1');
+                // API 호출 결과 중 "feedback" 키에 해당하는 값만 사용자에게 표시
+                addMessageToChatBox(feedbackWithLineBreaks, 'assistant', true);
+            })
+            .catch(error => {
+                console.error('API 호출에 실패했습니다.', error);
+                // 에러 메시지를 사용자에게 표시
+                addMessageToChatBox('API 호출에 실패했습니다: ' + error, 'user');
+            });
+        });
+    </script>
+</body>
+</html>

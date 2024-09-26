@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL 입력받아 API 호출하기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 80%;
+            max-width: 500px; /* 최대 너비 설정 */
+        }
+
+        input#urlInput {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.5); /* 반투명 배경색 설정 */
+            border: 1px solid #ccc; /* 테두리 추가 */
+            border-radius: 10px; /* 테두리 둥글게 */
+        }
+
+        button#fetchButton {
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px; /* 버튼을 위로부터 떨어뜨림 */
+            display: block; /* 블록 요소로 변경 */
+            margin-left: auto;  
+            margin-right: auto;
+            border-radius: 10px;
+        }
+
+        div#result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="urlInput" placeholder="웹툰 URL을 입력해주세요">
+        <button id="fetchButton">결과 보기</button>
+        <div id="result"></div>
+    </div>
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const urlInput = document.getElementById('urlInput').value;
+            if (!urlInput) {
+                alert('URL을 입력해주세요.');
+                return;
+            }
+
+            const apiEndpoint = 'http://34.64.213.235:8000/crawl';
+            const data = {
+                url: urlInput
+            };
+
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 올바르지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('API 호출에 실패했습니다.', error);
+                document.getElementById('result').textContent = 'API 호출에 실패했습니다: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>

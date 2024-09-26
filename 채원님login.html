@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>로그인 및 회원가입 예시</title>
+<style>
+  body { font-family: Arial, sans-serif; }
+  .container { max-width: 300px; margin: auto; padding: 20px; }
+  input, button { width: 100%; padding: 10px; margin: 10px 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>회원가입</h2>
+  <input type="text" id="signupName" placeholder="이름">
+  <input type="email" id="signupEmail" placeholder="이메일">
+  <input type="password" id="signupPassword" placeholder="비밀번호">
+  <button onclick="signup()">회원가입</button>
+
+  <h2>로그인</h2>
+  <input type="text" id="loginName" placeholder="이름">
+  <input type="email" id="loginEmail" placeholder="이메일">
+  <input type="password" id="loginPassword" placeholder="비밀번호">
+  <button onclick="login()">로그인</button>
+</div>
+
+<script>
+// 회원가입 함수
+function signup() {
+  const name = document.getElementById('signupName').value;
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+
+  fetch('https://decalcomanie-yebvymrbqa-du.a.run.app/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      password: password,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('회원가입 성공: ' + data.message);
+  })
+  .catch((error) => {
+    console.error('회원가입 실패:', error);
+  });
+}
+
+// 로그인 함수
+function login() {
+  const name = document.getElementById('loginName').value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  fetch('https://decalcomanie-yebvymrbqa-du.a.run.app/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      password: password,
+    }),
+  })
+  .then(response => {
+    const cookies = response.headers.get('Set-Cookie');
+    console.log(cookies); // 쿠키 값 확인
+
+    return response.json();
+  })
+  .then(data => {
+    if(data.accessToken) {
+      localStorage.setItem('token', data.accessToken);
+      alert('로그인 성공');
+    } else {
+      alert('로그인 실패: ' + data.error);
+    }
+  })
+  .catch((error) => {
+    console.error('로그인 실패:', error);
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 요청 예제</title>
+</head>
+<body>
+
+<button id="fetchDataButton">접근하기</button> 
+
+<script>
+document.getElementById('fetchDataButton').addEventListener('click', function() {
+    // fetch API를 사용한 요청 코드
+    fetch('http://34.64.213.235:8000/hi', {
+        method: 'GET', 
+        headers: {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjksImVtYWlsIjoiZmZmIiwiaWF0IjoxNzExMTI0MjEwLCJleHAiOjE3MTExMjc4MTAsImlzcyI6IkFib3V0IFRlY2gifQ.KyFLLwF4_NTAKHsDLRuKqEm3Xiw2bOz7ycOE4jddFtw', // 'Bearer ' 다음에 실제 토큰 값을 넣어주세요.
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('네트워크 응답이 올바르지 않습니다.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data); 
+    })
+    .catch(error => {
+        console.error('요청 중 에러 발생:', error); // 에러 처리
+    });
+});
+</script>
+
+</body>
+</html>

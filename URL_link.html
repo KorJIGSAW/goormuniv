@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>말풍선 스타일 대화상자</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .chat-box {
+            max-width: 400px;
+            margin: auto;
+        }
+        .chat-message {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .chat-message:last-child {
+            margin-bottom: 0;
+        }
+        .user-message .text, .assistant-message .text {
+            background-color: #ffffff;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+            padding: 10px 15px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .assistant-message .text {
+            opacity: 0.5;
+        }
+        input#urlInput, button#fetchButton, #result {
+            width: calc(100% - 40px);
+            padding: 10px;
+            margin: 20px auto;
+            display: block;
+        }
+        input#urlInput {
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            opacity: 0.5;
+        }
+        button#fetchButton {
+            width: 30%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #result {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-box" id="chatBox">
+        <!-- 대화 메시지가 여기에 동적으로 추가됩니다 -->
+    </div>
+    <input type="text" id="urlInput" placeholder="웹툰 URL을 입력해주세요">
+    <button id="fetchButton">결과 보기</button>
+    <div id="result"></div>
+
+    <script>
+        function displayInitialMessages() {
+            const messages = [
+                { text: '안녕하세요!', type: 'assistant' },
+                { text: '댓글을 보고싶은 웹툰의 URL을 입력해주세요!', type: 'assistant' }
+            ];
+    
+            messages.forEach(msg => {
+                addMessageToChatBox(msg.text, msg.type);
+            });
+        }
+    
+        function addMessageToChatBox(text, type) {
+            const chatBox = document.getElementById('chatBox');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', type + '-message');
+            const textElement = document.createElement('div');
+            textElement.classList.add('text');
+            textElement.textContent = text;
+            messageElement.appendChild(textElement);
+            chatBox.appendChild(messageElement);
+        }
+    
+        displayInitialMessages();
+    
+        document.getElementById('fetchButton').addEventListener('click', async function() {
+    const urlInput = document.getElementById('urlInput').value;
+    if (!urlInput) {
+        alert('URL을 입력해주세요.');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://34.64.213.235:8000/crawl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({url: urlInput}),
+        });
+
+        if (!response.ok) {
+            throw new Error('네트워크 응답이 올바르지 않습니다.');
+        }
+
+        const resultData = await response.json();
+
+        // 응답 데이터에서 필요한 정보를 접근하는 방식을 확인하세요.
+        // 예를 들어, resultData.result 같은 식으로 접근해야 할 수도 있습니다.
+        if (resultData) {
+            console.log('처리 결과:', resultData);
+            // 대화 상자에 메시지 추가
+            addMessageToChatBox(`입력하신 URL에 대한 처리 결과입니다: ${resultData}`, 'assistant');
+        } else {
+            throw new Error('응답 데이터가 비어있습니다.');
+        }
+
+    } catch (error) {
+        console.error('요청을 처리하는 중에 오류가 발생했습니다:', error);
+        addMessageToChatBox(`처리 중 오류가 발생했습니다: ${error.message}`, 'assistant');
+    }
+});
+
+    </script>
+</body>
+</html>
